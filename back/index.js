@@ -1,6 +1,6 @@
 const cors = require("cors");
 const express = require("express");
-require("dotenv").config();
+require("dotenv").config({ path: "./back/.env" });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const path = require("path");
