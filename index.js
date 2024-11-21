@@ -11,7 +11,7 @@ app.use(cors());
 
 // Routes here
 app.get("/", (req, res) => {
-  res.send("Hello World que tal");
+  res.send("Hello World");
 });
 
 app.post("/api/create-checkout-session", async (req, res) => {
