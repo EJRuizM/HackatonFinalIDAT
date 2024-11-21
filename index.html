@@ -29,13 +29,6 @@
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: Yummy
-  * Template URL: https://bootstrapmade.com/yummy-bootstrap-restaurant-website-template/
-  * Updated: Aug 07 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body class="index-page">
@@ -54,12 +47,10 @@
         <ul>
           <li><a href="#hero" class="active">Home<br></a></li>
           <li><a href="#menu">Menu</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#contact">Contacto</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-
-      <a class="btn-getstarted" href="index.html#book-a-table">Book a Table</a>
 
     </div>
   </header>
@@ -72,11 +63,14 @@
       <div class="container">
         <div class="row gy-4 justify-content-center justify-content-lg-between">
           <div class="col-lg-5 order-2 order-lg-1 d-flex flex-column justify-content-center">
-            <h1 data-aos="fade-up">Enjoy Your Healthy<br>Delicious Food</h1>
-            <p data-aos="fade-up" data-aos-delay="100">We are team of talented designers making websites with Bootstrap
+            <h1 data-aos="fade-up">Ensalada Japonesa<br>Por solo $20</h1>
+            <p data-aos="fade-up" data-aos-delay="100">Disfruta nuestro delicioso plato con ingredientes frescos de
+              temporada, como verduras, arroz,
+              mariscos y pescado
             </p>
             <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-              <a href="#book-a-table" class="btn-get-started">Booka a Table</a>
+              <button id="checkout-button" class="btn-get-started" data-name="Ensalada Japonesa" data-price="20"
+                data-productOwner="Edgar Ruiz" data-description="rica comida" data-quantity="1">Pagar Ahora</button>
             </div>
           </div>
           <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
@@ -198,7 +192,8 @@
 
       </div>
 
-    </section><!-- /Menu Section -->
+    </section>
+    <!-- /Menu Section -->
 
 
     <!-- Contact Section -->
@@ -304,7 +299,46 @@
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    document.getElementById("checkout-button").addEventListener("click", async (e) => {
+      const stripe = Stripe("pk_test_51QMINFP0vtmUGualJXvdsimOjMqdFXtddLWDQ3G9j4Hugcv94Zr02Ay5YVj3ITPxlIoEP9tfgOWOh6Yusyf5uKg900Rocyg1Kx"); // Reemplaza con tu clave pública
 
+      // Obtener los datos del producto desde los atributos del botón
+      const button = e.target;
+      console.log(button)
+      const product = {
+        name: button.getAttribute("data-name"),
+        price: parseInt(button.getAttribute("data-price")), // Convertir a número
+        productOwner: button.getAttribute("data-namproductOwnere"),
+        description: button.getAttribute("data-description"),
+        quantity: parseInt(button.getAttribute("data-quantity")),
+      };
+
+      try {
+        // Llamar al backend para crear la sesión de pago
+        const response = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ product }), // Enviar el producto al backend
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al crear la sesión de pago.");
+        }
+
+        const { id } = await response.json();
+
+        // Redirigir a Stripe Checkout
+        await stripe.redirectToCheckout({ sessionId: id });
+      } catch (error) {
+        console.error("Error:", error.message);
+        alert("Hubo un problema al procesar el pago. Inténtalo de nuevo.");
+      }
+    });
+  </script>
 </body>
 
 </html>
