@@ -44,8 +44,8 @@ app.post("/api/create-checkout-session", async (req, res) => {
       },
     ],
     mode: "payment",
-    success_url: "http://localhost:8000/success",
-    cancel_url: "http://localhost:8000/success",
+    success_url: "https://hackatonfinalidat.onrender.com/success",
+    cancel_url: "https://hackatonfinalidat.onrender.com/cancel",
   });
   res.json({ id: session.id });
 });
